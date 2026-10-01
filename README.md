@@ -189,6 +189,16 @@ click **Schedule**:
 
 ![Part 2 Cowork schedule approval — create recurring task dialog](docs/part2-schedule-approval.png)
 
+Once scheduled, the task appears under **Automations** (Cowork's recurring-task manager). You
+can toggle it on/off, see the next run time, and open it for details:
+
+![Part 2 Cowork Automations list — active recurring tasks](docs/part2-automations-list.png)
+
+Opening the task shows its schedule, full instructions, run-notification setting, and a **Run
+now** button to trigger an immediate run:
+
+![Part 2 Cowork scheduled task detail — Consolidate SurfaceCatalogs workbooks](docs/part2-scheduled-task-detail.png)
+
 Each Friday run writes a new timestamped file, giving you a weekly history of summaries.
 
 ---
