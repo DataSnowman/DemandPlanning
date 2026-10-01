@@ -17,11 +17,64 @@ Ultra** and **Surface RTX Spark Dev Box**, then aggregates them into one summary
 
 ---
 
-## Part 1 — Copilot Chat: aggregate the 3 files in this repo
+## The concept this repo illustrates
 
-**Goal:** append the three catalogs in `spreadsheets\` into one `summary<dateRun>.xlsx`.
+![Copilot Cowork concept — preparation before a new product launch](docs/cowork-concept-product-launch.png)
 
-**Step 1.** Open this repo in Copilot Chat.
+The slide above (a marketing "new product launch" example) captures the shift this repo is
+built to demonstrate: moving a **traditional, multi-tool, person-dependent process** into a
+**standardized, automated, scheduled Cowork workflow**.
+
+**How this repo maps to the slide:**
+
+| Slide concept | Where this repo shows it |
+|---------------|--------------------------|
+| **Traditional process using Copilot** — separate tools (Chat, Word, Excel, Outlook), ~6–7 hrs, interrupted and manual | **Part 1 — Copilot Chat**: a human drives the aggregation one file at a time, by hand, in a single tool. |
+| **Challenge: individual dependency** — "results depend on individual prompting skills" | The bundled **script + skill** encode the logic (clean → append → `Source File` → formatted output), so the result no longer depends on who prompts it. |
+| **Challenge: quality variability** — "deliverables created from fragmented context" | Every run produces the **same** `summary<dateRun>.xlsx`: identical columns, no stray total rows, consistent formatting. |
+| **With Cowork #1 — Automatically plan and execute required tasks** | **Part 2, Step 3**: one Cowork prompt reads the OneDrive folder and produces the summary end-to-end. |
+| **With Cowork #2 — Register a custom skill** ("register the workflow as a reusable skill") | **Part 2, Step 2**: `tools\spreadsheet-aggregator\SKILL.md` is exactly that reusable, registerable custom skill (`aggregate-spreadsheets`). |
+| **With Cowork #3 — Register scheduled execution** ("run this skill every Monday at 9:00 AM") | **Part 2, Step 4**: the "every Friday at 5pm" scheduled Cowork task — the same idea on a different cadence. |
+| **Tip: use "Prompt Coach" to craft instructions** | The ready-made prompts in this README and `PROMPTS.md` play that role — vetted instructions you can paste directly. |
+
+**Where the analogy is partial:** the slide's example spans multiple Office apps (Word
+summary, PowerPoint deck, Outlook email) for a marketing launch, while this repo focuses on
+the **data-ingestion slice** — aggregating spreadsheets into one workbook — for demand
+planning. The *pattern* is identical (manual multi-step work → custom skill → scheduled
+automation); only the specific deliverables differ. **Part 3** (a read-only app over the
+summary) extends the pattern one step further than the slide.
+
+---
+
+## Part 1 — Copilot Chat: aggregate the 3 files
+
+**Goal:** append the three catalogs into one `summary<dateRun>.xlsx`.
+
+How you give Copilot the files depends on which chat surface you're in:
+
+### Option A — Attach the files (M365 / web / Teams Copilot Chat)
+
+These surfaces have **no local filesystem**, so you can't reference a folder path — attach the
+files directly (uploading sends a copy to OneDrive, which is expected).
+
+**Step 1.** Click **+** / the attach button and upload `BestBuy.xlsx`, `Walmart.xlsx`, and
+`Costco.xlsx`.
+
+**Step 2.** Paste this prompt (note: "the three attached spreadsheets", not a folder):
+
+```
+Append the three attached spreadsheets (BestBuy.xlsx, Walmart.xlsx, Costco.xlsx) into a
+single summary<dateRun>.xlsx, where <dateRun> is today's date. Keep one header row, add a
+"Source File" column so I can tell which retailer each row came from, and drop any blank or
+total rows. Confirm the columns match across all three files first, then show me the row
+count and which files were combined.
+```
+
+### Option B — Reference the folder (GitHub Copilot in VS Code / Copilot CLI)
+
+These surfaces **can** see your workspace, so you can point at the folder instead of attaching.
+
+**Step 1.** Open this repo in VS Code (with Copilot) or the Copilot CLI.
 
 **Step 2.** Paste this prompt:
 
@@ -33,13 +86,19 @@ each row came from, and drop any blank or total rows. Confirm the columns match 
 three files first, then show me the row count and which files were combined.
 ```
 
-**Step 3.** Copilot creates `spreadsheets\summary<today>.xlsx`.
+**Step 3.** Copilot creates `summary<today>.xlsx` (in the folder for Option B, or as a
+downloadable file for Option A).
 
 **Expected result:** 39 rows (13 per retailer), 22 columns (the 21 catalog columns + `Source
 File`), no total rows. ✅
 
-> **Under the hood (optional):** this is exactly what the bundled script does. You can run it
-> directly instead of asking Chat:
+Example output from running the Option A prompt in M365 Copilot Chat — Copilot confirms the
+21-column match, reports 39 combined rows (13 per retailer), and saves `summary2026-10-01.xlsx`:
+
+![Part 1 Copilot Chat output — summary workbook created](docs/part1-chat-output.png)
+
+> **Under the hood (optional):** this is exactly what the bundled script does. In a workspace
+> you can run it directly instead of asking Chat:
 > ```
 > python tools/spreadsheet-aggregator/aggregate_spreadsheets.py --input spreadsheets
 > ```
@@ -65,10 +124,52 @@ C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs\
 You can drop in **3 or more** files — any `.xlsx` with the same columns will be included.
 On Windows a synced OneDrive folder is just a normal local path, so Cowork reads it directly.
 
-### Step 2 — Add the Cowork skill (one time)
+### Step 2 — Run it (one-off, no custom skill needed)
 
-This repo ships a reusable skill, `aggregate-spreadsheets`, at
-`tools\spreadsheet-aggregator\SKILL.md`. Add it as a **custom skill** in Cowork:
+You don't need to register anything first — just describe the whole task in one Cowork prompt.
+Paste this and **replace the folder path with your OneDrive folder**:
+
+```
+In my OneDrive folder "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx
+file (skip any file whose name starts with "summary"). First confirm they all share the same
+columns. Then append all of their rows into a single new workbook named summary<dateRun>.xlsx
+in that same folder, where <dateRun> is today's date. Add a "Source File" column as the first
+column so each row shows which file it came from, keep only one header row, and drop any blank
+or total/subtotal rows. Do not modify the source files. When done, tell me the row count, the
+column count, and which files were combined.
+```
+
+### Step 3 — Check the result
+
+**Expected result:** `summary<today>.xlsx` appears **in the OneDrive folder**, with one row
+per SKU across all source files and a `Source File` column — 39 rows / 22 columns for the
+three sample catalogs, no total rows. ✅
+
+### Step 4 (optional) — Schedule it for every Friday
+
+To make the same no-skill task recur, paste this in Cowork:
+
+```
+Set up a recurring Cowork task every Friday at 5pm. Each run should look in my OneDrive folder
+"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx (skipping any file
+whose name starts with "summary"), confirm the columns match, and append all their rows into a
+dated summary<dateRun>.xlsx in that folder. Add a "Source File" column, keep one header row,
+and drop blank/total rows without modifying the source files. After each run, post a short
+summary (row count + which files were combined).
+```
+
+Each Friday run writes a new dated file, giving you a weekly history of summaries.
+
+---
+
+### Optional upgrade — register a reusable custom skill
+
+The prompts above work on their own, but they're long and you have to paste the full
+instructions every time. Registering a **custom skill** turns all of that into a short,
+standardized command you (or teammates) can reuse — this is the "Register a custom skill"
+idea from the [concept slide](#the-concept-this-repo-illustrates).
+
+**Add the skill (one time):**
 
 1. In Cowork, open **Skills** → **Add custom skill**.
 2. Name it `aggregate-spreadsheets`.
@@ -78,34 +179,24 @@ This repo ships a reusable skill, `aggregate-spreadsheets`, at
 *(If your Cowork build asks for a file instead of pasted text, point it at
 `tools\spreadsheet-aggregator\SKILL.md`.)*
 
-### Step 3 — Run it (one-off)
-
-In Cowork, paste this prompt — **replace the folder path with your OneDrive folder**:
+**Then the one-off prompt shrinks to:**
 
 ```
 Using the aggregate-spreadsheets skill, append every .xlsx in my OneDrive folder
-"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a summary<dateRun>.xlsx in that
-same folder. Skip any existing summary*.xlsx, drop blank/total rows, add a "Source File"
-column, and don't modify the source files. Then tell me the row count, column count, and
-which files were combined.
+"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into summary<dateRun>.xlsx in that same
+folder, and tell me the row count and which files were combined.
 ```
 
-**Expected result:** `summary<today>.xlsx` appears **in the OneDrive folder**, with one row
-per SKU across all source files and a `Source File` column. ✅
-
-### Step 4 (optional) — Schedule it for every Friday
-
-To make it recur, paste this in Cowork instead:
+**And the Friday schedule becomes:**
 
 ```
-Set up a recurring Cowork task every Friday at 5pm that uses the aggregate-spreadsheets
-skill to append every .xlsx in my OneDrive folder
+Set up a recurring Cowork task every Friday at 5pm that uses the aggregate-spreadsheets skill
+to append every .xlsx in my OneDrive folder
 "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a dated summary<dateRun>.xlsx in
-that folder. Skip prior summary*.xlsx files, drop blank/total rows, add a "Source File"
-column, and post a short summary (row count + sources) after each run.
+that folder. Post a short summary (row count + sources) after each run.
 ```
 
-Each Friday run writes a new dated file, giving you a weekly history of summaries.
+Same result as the no-skill path — just shorter to invoke and consistent across runs.
 
 ---
 
@@ -146,6 +237,9 @@ tools\spreadsheet-aggregator\
     aggregate_spreadsheets.py                    # the append/clean/format engine
     SKILL.md                                     # Cowork/CLI custom-skill definition
     PROMPTS.md                                   # copy-paste prompts for every flow
+docs\
+    cowork-concept-product-launch.png            # the Cowork concept slide
+    part1-chat-output.png                        # Part 1 Chat run output screenshot
 README.md                                        # this guide
 ```
 
