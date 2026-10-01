@@ -131,19 +131,27 @@ Paste this and **replace the folder path with your OneDrive folder**:
 
 ```
 In my OneDrive folder "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx
-file (skip any file whose name starts with "summary"). First confirm they all share the same
-columns. Then append all of their rows into a single new workbook named summary<dateRun>.xlsx
-in that same folder, where <dateRun> is today's date. Add a "Source File" column as the first
-column so each row shows which file it came from, keep only one header row, and drop any blank
-or total/subtotal rows. Do not modify the source files. When done, tell me the row count, the
-column count, and which files were combined.
+file (skip any file whose name starts with "summary", and ignore the output subfolder). First
+confirm they all share the same columns. Then append all of their rows into a single new
+workbook named summary<dateRun>.xlsx, where <dateRun> is today's date, and save it inside a
+"PromptSummary" subfolder of that OneDrive folder (create the PromptSummary folder if it
+doesn't exist). Add a "Source File" column as the first column so each row shows which file it
+came from, keep only one header row, and drop any blank or total/subtotal rows. Do not modify
+the source files. When done, tell me the row count, the column count, and which files were
+combined.
 ```
 
 ### Step 3 — Check the result
 
-**Expected result:** `summary<today>.xlsx` appears **in the OneDrive folder**, with one row
-per SKU across all source files and a `Source File` column — 39 rows / 22 columns for the
-three sample catalogs, no total rows. ✅
+**Expected result:** `summary<today>.xlsx` appears in a **`PromptSummary`** subfolder of your
+OneDrive folder, with one row per SKU across all source files and a `Source File` column —
+39 rows / 22 columns for the three sample catalogs, no total rows. ✅
+
+Example output from running the Step 2 no-skill prompt in Cowork — it combines the three
+OneDrive workbooks into `summary2026-10-01.xlsx` (39 data rows, 22 columns, `Source File`
+first, one header row, no blank/total rows):
+
+![Part 2 Cowork output — combined OneDrive catalog workbook](docs/part2-cowork-output.png)
 
 ### Step 4 (optional) — Schedule it for every Friday
 
@@ -153,9 +161,10 @@ To make the same no-skill task recur, paste this in Cowork:
 Set up a recurring Cowork task every Friday at 5pm. Each run should look in my OneDrive folder
 "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx (skipping any file
 whose name starts with "summary"), confirm the columns match, and append all their rows into a
-dated summary<dateRun>.xlsx in that folder. Add a "Source File" column, keep one header row,
-and drop blank/total rows without modifying the source files. After each run, post a short
-summary (row count + which files were combined).
+dated summary<dateRun>.xlsx saved in a "PromptSummary" subfolder of that OneDrive folder
+(create it if needed). Add a "Source File" column, keep one header row, and drop blank/total
+rows without modifying the source files. After each run, post a short summary (row count +
+which files were combined).
 ```
 
 Each Friday run writes a new dated file, giving you a weekly history of summaries.
@@ -183,20 +192,24 @@ idea from the [concept slide](#the-concept-this-repo-illustrates).
 
 ```
 Using the aggregate-spreadsheets skill, append every .xlsx in my OneDrive folder
-"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into summary<dateRun>.xlsx in that same
-folder, and tell me the row count and which files were combined.
+"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into summary<dateRun>.xlsx, and tell me
+the row count and which files were combined.
 ```
+
+The skill always writes its output into a **`SkillSummary`** subfolder of the source folder,
+so skill runs stay separate from the no-skill `PromptSummary` output.
 
 **And the Friday schedule becomes:**
 
 ```
 Set up a recurring Cowork task every Friday at 5pm that uses the aggregate-spreadsheets skill
 to append every .xlsx in my OneDrive folder
-"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a dated summary<dateRun>.xlsx in
-that folder. Post a short summary (row count + sources) after each run.
+"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a dated summary<dateRun>.xlsx. Post
+a short summary (row count + sources) after each run.
 ```
 
-Same result as the no-skill path — just shorter to invoke and consistent across runs.
+Same result as the no-skill path — just shorter to invoke and consistent across runs. (No-skill
+runs land in `PromptSummary`; skill runs land in `SkillSummary`.)
 
 ---
 
@@ -240,6 +253,7 @@ tools\spreadsheet-aggregator\
 docs\
     cowork-concept-product-launch.png            # the Cowork concept slide
     part1-chat-output.png                        # Part 1 Chat run output screenshot
+    part2-cowork-output.png                      # Part 2 Cowork run output screenshot
 README.md                                        # this guide
 ```
 

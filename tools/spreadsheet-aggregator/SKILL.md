@@ -16,6 +16,9 @@ single review-ready workbook.
 - **Append, don't merge-by-key.** Rows are stacked; a `Source File` column preserves origin.
 - **No totals in the summary.** Blank rows and leftover total/subtotal rows are dropped automatically.
 - **Deterministic output name.** `summary<dateRun>.xlsx`, where `<dateRun>` is the run date.
+- **Dedicated output folder.** Always write the summary into a `SkillSummary` subfolder of the
+  source folder (create it if needed). This keeps skill output separate from the sources and
+  from any no-skill/manual `PromptSummary` output.
 - **Fail loud on structural drift.** Warn (or stop, with `--strict`) when a file's columns differ.
 - **3 or more files.** Works with any count ≥ 2; the demand-planning demo uses 3.
 
@@ -24,31 +27,34 @@ single review-ready workbook.
 1. **Input folder** — the OneDrive-synced local path (e.g.
    `C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs`) or a repo path like `.\spreadsheets`.
    On Windows, a synced OneDrive folder is just a normal local path — use it directly.
-2. **Output folder** — defaults to the input folder.
+2. **Output folder** — defaults to a `SkillSummary` subfolder of the input folder.
 3. **Schedule** (optional) — e.g. "every Friday". If requested, set up a recurring run
    rather than a one-off (see *Scheduling* below).
 
 ## Procedure
 
 1. **Resolve the folder.** Confirm the OneDrive/local path exists and list the `.xlsx`
-   files, skipping any existing `summary*.xlsx` and Excel lock files (`~$*`).
+   files, skipping any existing `summary*.xlsx`, the `SkillSummary` subfolder, and Excel
+   lock files (`~$*`).
 2. **Validate columns.** Read the first file as the reference schema; compare the rest.
    Report any missing/extra columns. Stop if the user asked for strict matching.
 3. **Clean.** Drop fully blank rows and total/subtotal rows (first-cell markers like
    "Total", "Average", "Subtotal", "Total Units In Stock", "Average Price").
 4. **Append.** Concatenate all rows, adding a `Source File` column as the first column.
-5. **Write.** Save `summary<dateRun>.xlsx` with a formatted header row, frozen header,
-   and an auto-filter. Do not add total rows to the summary.
+5. **Write.** Save `summary<dateRun>.xlsx` into the `SkillSummary` subfolder (create it if
+   needed) with a formatted header row, frozen header, and an auto-filter. Do not add total
+   rows to the summary.
 6. **Report.** State the output path, total rows, column count, and sources combined.
 
 ## Preferred execution
 
-Use the bundled script (no bespoke code needed):
+Use the bundled script (no bespoke code needed). Point `--output` at the `SkillSummary`
+subfolder of the input folder; the script creates it automatically:
 
 ```bash
 python tools/spreadsheet-aggregator/aggregate_spreadsheets.py \
     --input "<OneDrive or local folder>" \
-    --output "<optional output folder>" \
+    --output "<OneDrive or local folder>\SkillSummary" \
     --date-format %Y-%m-%d \
     [--strict]
 ```
