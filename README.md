@@ -64,10 +64,11 @@ files directly (uploading sends a copy to OneDrive, which is expected).
 
 ```
 Append the three attached spreadsheets (BestBuy.xlsx, Walmart.xlsx, Costco.xlsx) into a
-single summary<dateRun>.xlsx, where <dateRun> is today's date. Keep one header row, add a
-"Source File" column so I can tell which retailer each row came from, and drop any blank or
-total rows. Confirm the columns match across all three files first, then show me the row
-count and which files were combined.
+single summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example
+2026-10-01_1408) so running it more than once a day won't overwrite the previous file. Keep
+one header row, add a "Source File" column so I can tell which retailer each row came from,
+and drop any blank or total rows. Confirm the columns match across all three files first, then
+show me the row count and which files were combined.
 ```
 
 ### Option B — Reference the folder (GitHub Copilot in VS Code / Copilot CLI)
@@ -80,20 +81,23 @@ These surfaces **can** see your workspace, so you can point at the folder instea
 
 ```
 Append the three spreadsheets in the `spreadsheets` folder (BestBuy.xlsx, Walmart.xlsx,
-Costco.xlsx) into a single summary<dateRun>.xlsx in that same folder, where <dateRun> is
-today's date. Keep one header row, add a "Source File" column so I can tell which retailer
-each row came from, and drop any blank or total rows. Confirm the columns match across all
-three files first, then show me the row count and which files were combined.
+Costco.xlsx) into a single summary<dateRun>.xlsx in that same folder, where <dateRun> is the
+current date and time (for example 2026-10-01_1408) so running it more than once a day won't
+overwrite the previous file. Keep one header row, add a "Source File" column so I can tell
+which retailer each row came from, and drop any blank or total rows. Confirm the columns match
+across all three files first, then show me the row count and which files were combined.
 ```
 
-**Step 3.** Copilot creates `summary<today>.xlsx` (in the folder for Option B, or as a
-downloadable file for Option A).
+**Step 3.** Copilot creates `summary<dateRun>.xlsx` (e.g. `summary2026-10-01_1408.xlsx`) — in
+the folder for Option B, or as a downloadable file for Option A.
 
 **Expected result:** 39 rows (13 per retailer), 22 columns (the 21 catalog columns + `Source
 File`), no total rows. ✅
 
 Example output from running the Option A prompt in M365 Copilot Chat — Copilot confirms the
-21-column match, reports 39 combined rows (13 per retailer), and saves `summary2026-10-01.xlsx`:
+21-column match, reports 39 combined rows (13 per retailer), and saves `summary2026-10-01.xlsx`
+(this run predates the time-suffix convention; the current prompt names files like
+`summary2026-10-01_1408.xlsx`):
 
 ![Part 1 Copilot Chat output — summary workbook created](docs/part1-chat-output.png)
 
@@ -129,31 +133,42 @@ On Windows a synced OneDrive folder is just a normal local path, so Cowork reads
 You don't need to register anything first — just describe the whole task in one Cowork prompt.
 Paste this and **replace the folder path with your OneDrive folder**:
 
+> ⚠️ **Point Cowork at the OneDrive folder first.** Select/attach your **`SurfaceCatalogs`**
+> folder (the folder chip) so Cowork knows where to look. If you skip this, the prompt has no
+> folder to scan. *(Easy to forget on the first run!)*
+
 ```
 In my OneDrive folder "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx
 file (skip any file whose name starts with "summary", and ignore the output subfolder). First
 confirm they all share the same columns. Then append all of their rows into a single new
-workbook named summary<dateRun>.xlsx, where <dateRun> is today's date, and save it inside a
-"PromptSummary" subfolder of that OneDrive folder (create the PromptSummary folder if it
-doesn't exist). Add a "Source File" column as the first column so each row shows which file it
-came from, keep only one header row, and drop any blank or total/subtotal rows. Do not modify
-the source files. When done, tell me the row count, the column count, and which files were
-combined.
+workbook named summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example
+2026-10-01_1408) so running it more than once a day won't overwrite the previous file, and save
+it inside a "PromptSummary" subfolder of that OneDrive folder (create the PromptSummary folder
+if it doesn't exist). Add a "Source File" column as the first column so each row shows which
+file it came from, keep only one header row, and drop any blank or total/subtotal rows. Do not
+modify the source files. When done, tell me the row count, the column count, and which files
+were combined.
 ```
 
 ### Step 3 — Check the result
 
-**Expected result:** `summary<today>.xlsx` appears in a **`PromptSummary`** subfolder of your
-OneDrive folder, with one row per SKU across all source files and a `Source File` column —
-39 rows / 22 columns for the three sample catalogs, no total rows. ✅
+**Expected result:** `summary<dateRun>.xlsx` (e.g. `summary2026-10-01_1408.xlsx`) appears in a
+**`PromptSummary`** subfolder of your OneDrive folder, with one row per SKU across all source
+files and a `Source File` column — 39 rows / 22 columns for the three sample catalogs, no total
+rows. ✅
 
 Example output from running the Step 2 no-skill prompt in Cowork — it combines the three
 OneDrive workbooks into `summary2026-10-01.xlsx` (39 data rows, 22 columns, `Source File`
-first, one header row, no blank/total rows):
+first, one header row, no blank/total rows; this run predates the time-suffix convention):
 
 ![Part 2 Cowork output — combined OneDrive catalog workbook](docs/part2-cowork-output.png)
 
 ### Step 4 (optional) — Schedule it for every Friday
+
+> ⚠️ **Before you run the schedule prompt, point Cowork at the OneDrive folder.** Select/attach
+> your **`SurfaceCatalogs`** folder (the folder chip, as shown above) so the scheduled task knows
+> where to look each week. If you skip this, the recurring task has no folder to scan. *(Easy to
+> forget on the first run!)*
 
 To make the same no-skill task recur, paste this in Cowork:
 
@@ -161,13 +176,20 @@ To make the same no-skill task recur, paste this in Cowork:
 Set up a recurring Cowork task every Friday at 5pm. Each run should look in my OneDrive folder
 "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx (skipping any file
 whose name starts with "summary"), confirm the columns match, and append all their rows into a
-dated summary<dateRun>.xlsx saved in a "PromptSummary" subfolder of that OneDrive folder
-(create it if needed). Add a "Source File" column, keep one header row, and drop blank/total
-rows without modifying the source files. After each run, post a short summary (row count +
-which files were combined).
+summary<dateRun>.xlsx whose name includes the current date and time (for example
+2026-10-01_1700), saved in a "PromptSummary" subfolder of that OneDrive folder (create it if
+needed). Add a "Source File" column, keep one header row, and drop blank/total rows without
+modifying the source files. After each run, post a short summary (row count + which files were
+combined).
 ```
 
-Each Friday run writes a new dated file, giving you a weekly history of summaries.
+Cowork will ask you to confirm the recurring task before it's created — review the name,
+cadence (Weekly / Friday / 5:00 PM), and description, optionally tick **Run once now**, then
+click **Schedule**:
+
+![Part 2 Cowork schedule approval — create recurring task dialog](docs/part2-schedule-approval.png)
+
+Each Friday run writes a new timestamped file, giving you a weekly history of summaries.
 
 ---
 
@@ -192,20 +214,22 @@ idea from the [concept slide](#the-concept-this-repo-illustrates).
 
 ```
 Using the aggregate-spreadsheets skill, append every .xlsx in my OneDrive folder
-"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into summary<dateRun>.xlsx, and tell me
-the row count and which files were combined.
+"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a summary<dateRun>.xlsx whose name
+includes the current date and time (for example 2026-10-01_1408), and tell me the row count and
+which files were combined.
 ```
 
-The skill always writes its output into a **`SkillSummary`** subfolder of the source folder,
-so skill runs stay separate from the no-skill `PromptSummary` output.
+The skill always writes its output into a **`SkillSummary`** subfolder of the source folder
+and names files with a date **and time** stamp (e.g. `summary2026-10-01_1408.xlsx`), so skill
+runs stay separate from the no-skill `PromptSummary` output and can run multiple times a day.
 
 **And the Friday schedule becomes:**
 
 ```
 Set up a recurring Cowork task every Friday at 5pm that uses the aggregate-spreadsheets skill
 to append every .xlsx in my OneDrive folder
-"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a dated summary<dateRun>.xlsx. Post
-a short summary (row count + sources) after each run.
+"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a timestamped summary<dateRun>.xlsx
+(date + time in the name). Post a short summary (row count + sources) after each run.
 ```
 
 Same result as the no-skill path — just shorter to invoke and consistent across runs. (No-skill
@@ -263,7 +287,7 @@ README.md                                        # this guide
 |------|---------|-------------|
 | `--input` | *(required)* | Folder with the source `.xlsx` files (a OneDrive folder is a local path). |
 | `--output` | same as `--input` | Where to write the summary file. |
-| `--date-format` | `%Y-%m-%d` | strftime format for `<dateRun>`. Use `%Y-%m-%d_%H%M` for multiple runs/day. |
+| `--date-format` | `%Y-%m-%d_%H%M` | strftime format for `<dateRun>`. Default includes date + time so multiple runs/day don't overwrite; use `%Y-%m-%d` for one file per day. |
 | `--sheet-name` | `Summary` | Worksheet name in the output file. |
 | `--strict` | off | Fail if any file's columns differ from the first file. |
 

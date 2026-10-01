@@ -15,7 +15,9 @@ single review-ready workbook.
 - **Read-only on sources.** Never edit, move, or overwrite the source spreadsheets.
 - **Append, don't merge-by-key.** Rows are stacked; a `Source File` column preserves origin.
 - **No totals in the summary.** Blank rows and leftover total/subtotal rows are dropped automatically.
-- **Deterministic output name.** `summary<dateRun>.xlsx`, where `<dateRun>` is the run date.
+- **Deterministic output name with timestamp.** `summary<dateRun>.xlsx`, where `<dateRun>` is
+  the run date **and time** (e.g. `summary2026-10-01_1408.xlsx`) so the skill can run multiple
+  times a day without overwriting a prior summary.
 - **Dedicated output folder.** Always write the summary into a `SkillSummary` subfolder of the
   source folder (create it if needed). This keeps skill output separate from the sources and
   from any no-skill/manual `PromptSummary` output.
@@ -41,26 +43,28 @@ single review-ready workbook.
 3. **Clean.** Drop fully blank rows and total/subtotal rows (first-cell markers like
    "Total", "Average", "Subtotal", "Total Units In Stock", "Average Price").
 4. **Append.** Concatenate all rows, adding a `Source File` column as the first column.
-5. **Write.** Save `summary<dateRun>.xlsx` into the `SkillSummary` subfolder (create it if
-   needed) with a formatted header row, frozen header, and an auto-filter. Do not add total
-   rows to the summary.
+5. **Write.** Save `summary<dateRun>.xlsx` (with a date + time stamp, e.g.
+   `summary2026-10-01_1408.xlsx`) into the `SkillSummary` subfolder (create it if needed) with
+   a formatted header row, frozen header, and an auto-filter. Do not add total rows to the
+   summary.
 6. **Report.** State the output path, total rows, column count, and sources combined.
 
 ## Preferred execution
 
 Use the bundled script (no bespoke code needed). Point `--output` at the `SkillSummary`
-subfolder of the input folder; the script creates it automatically:
+subfolder of the input folder; the script creates it automatically. The default
+`--date-format` already includes date + time, so you can omit it:
 
 ```bash
 python tools/spreadsheet-aggregator/aggregate_spreadsheets.py \
     --input "<OneDrive or local folder>" \
     --output "<OneDrive or local folder>\SkillSummary" \
-    --date-format %Y-%m-%d \
     [--strict]
 ```
 
-- `<dateRun>` comes from `--date-format` (strftime). Use `%Y-%m-%d_%H%M` to avoid
-  overwriting when running multiple times a day.
+- `<dateRun>` comes from `--date-format` (strftime). The default `%Y-%m-%d_%H%M` includes the
+  time so running multiple times a day won't overwrite; pass `--date-format %Y-%m-%d` for one
+  file per day.
 - The script requires `pandas` and `openpyxl` (`pip install pandas openpyxl`).
 
 If you must do it inline instead of the script, follow the same clean → append →

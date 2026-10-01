@@ -7,16 +7,16 @@ formatted header and a `Source File` column so each row's origin is preserved.
 
 Usage:
     python aggregate_spreadsheets.py --input "<folder>" [--output "<folder>"]
-                                     [--date-format %Y-%m-%d] [--sheet-name "Summary"]
+                                     [--date-format %Y-%m-%d_%H%M] [--sheet-name "Summary"]
                                      [--strict]
 
 Examples:
-    # OneDrive synced folder on Windows
+    # OneDrive synced folder on Windows (default name includes date + time)
     python aggregate_spreadsheets.py --input "C:\\Users\\me\\OneDrive\\SurfaceCatalogs"
 
-    # Explicit output folder and timestamped file name
+    # Date-only file name (one run per day; later runs overwrite)
     python aggregate_spreadsheets.py --input ".\\spreadsheets" --output ".\\spreadsheets" \
-        --date-format %Y-%m-%d_%H%M
+        --date-format %Y-%m-%d
 """
 from __future__ import annotations
 
@@ -111,8 +111,9 @@ def main() -> int:
     ap = argparse.ArgumentParser(description="Append spreadsheets into summary<dateRun>.xlsx")
     ap.add_argument("--input", required=True, help="Folder containing the source .xlsx files")
     ap.add_argument("--output", default=None, help="Output folder (default: same as --input)")
-    ap.add_argument("--date-format", default="%Y-%m-%d",
-                    help="strftime format for the <dateRun> suffix (default: %%Y-%%m-%%d)")
+    ap.add_argument("--date-format", default="%Y-%m-%d_%H%M",
+                    help="strftime format for the <dateRun> suffix (default: %%Y-%%m-%%d_%%H%%M, "
+                         "date + time so multiple runs per day don't overwrite)")
     ap.add_argument("--sheet-name", default="Summary", help="Worksheet name in the output file")
     ap.add_argument("--strict", action="store_true",
                     help="Fail if any file's columns do not match the first file")
