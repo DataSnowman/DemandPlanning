@@ -212,13 +212,22 @@ idea from the [concept slide](#the-concept-this-repo-illustrates).
 
 **Add the skill (one time):**
 
-1. In Cowork, open **Skills** → **Add custom skill**.
-2. Name it `aggregate-spreadsheets`.
-3. Paste the entire contents of `tools\spreadsheet-aggregator\SKILL.md` (the `---` frontmatter
-   **and** the body) as the skill definition, then **Save**.
+1. In Cowork, open **Skills**, then click **Add** → **Upload**.
 
-*(If your Cowork build asks for a file instead of pasted text, point it at
-`tools\spreadsheet-aggregator\SKILL.md`.)*
+   ![Part 2 Cowork — Add skill menu with Upload option](docs/part2-add-skill-menu.png)
+
+2. In the file picker, browse to `tools\spreadsheet-aggregator\` and select **`SKILL.md`**,
+   then click **Open**.
+
+   ![Part 2 Cowork — upload SKILL.md from the spreadsheet-aggregator folder](docs/part2-upload-skill-file.png)
+
+3. Cowork registers it as the `aggregate-spreadsheets` skill (the name and description come from
+   the `---` frontmatter at the top of `SKILL.md`). It now appears in your **Added** skills list.
+
+   ![Part 2 Cowork — aggregate-spreadsheets skill in the Added list](docs/part2-skill-added.png)
+
+*(Prefer not to upload a file? Use **Add** → **Create skill with Cowork** and paste the entire
+contents of `SKILL.md` — the `---` frontmatter **and** the body — as the skill definition.)*
 
 **Then the one-off prompt shrinks to:**
 
