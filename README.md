@@ -176,12 +176,20 @@ To make the same no-skill task recur, paste this in Cowork:
 Set up a recurring Cowork task every Friday at 5pm. Each run should look in my OneDrive folder
 "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx (skipping any file
 whose name starts with "summary"), confirm the columns match, and append all their rows into a
-summary<dateRun>.xlsx whose name includes the current date and time (for example
-2026-10-01_1700), saved in a "PromptSummary" subfolder of that OneDrive folder (create it if
-needed). Add a "Source File" column, keep one header row, and drop blank/total rows without
+NEW summary file saved in a "PromptSummary" subfolder of that OneDrive folder (create it if
+needed). Name the file summary<dateRun>.xlsx where <dateRun> includes BOTH the date AND the
+time down to the minute, e.g. summary2026-10-01_1700.xlsx. Always create a new file every run —
+never overwrite, replace, or "refresh" an existing summary, even if one already exists for
+today. Add a "Source File" column, keep one header row, and drop blank/total rows without
 modifying the source files. After each run, post a short summary (row count + which files were
 combined).
 ```
+
+> 💡 **Why the time matters:** if the name is only `summary2026-10-01.xlsx` (date only), a second
+> run the same day will overwrite the first. Including the time (`_1700`) guarantees each run
+> produces a distinct file. Make sure the task's saved **Instructions** say "include the time"
+> and "always create a new file" — if you scheduled an earlier version, open the task and edit
+> its instructions (see below).
 
 Cowork will ask you to confirm the recurring task before it's created — review the name,
 cadence (Weekly / Friday / 5:00 PM), and description, optionally tick **Run once now**, then
@@ -200,6 +208,17 @@ now** button to trigger an immediate run:
 ![Part 2 Cowork scheduled task detail — Consolidate SurfaceCatalogs workbooks](docs/part2-scheduled-task-detail.png)
 
 Each Friday run writes a new timestamped file, giving you a weekly history of summaries.
+
+> ⚠️ **If an earlier run overwrote the summary** (you see a single `summary2026-10-01.xlsx`
+> getting "refreshed" instead of new files appearing): the task's saved **Instructions** are
+> using a **date-only** name. Open the task (screenshot above), edit the **Instructions** box so
+> the output name includes the **time** and the task **always creates a new file**, then save.
+> Replace the filename sentence with:
+>
+> > *Create a real Excel workbook named `summary<dateRun>.xlsx`, where `<dateRun>` is the current
+> > run date **and time down to the minute** (for example `2026-10-01_1700`), in the
+> > `PromptSummary` subfolder. Always create a new file on every run — never overwrite, replace,
+> > or refresh an existing summary, even if one already exists for today.*
 
 ---
 
@@ -247,8 +266,10 @@ runs stay separate from the no-skill `PromptSummary` output and can run multiple
 ```
 Set up a recurring Cowork task every Friday at 5pm that uses the aggregate-spreadsheets skill
 to append every .xlsx in my OneDrive folder
-"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a timestamped summary<dateRun>.xlsx
-(date + time in the name). Post a short summary (row count + sources) after each run.
+"C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs" into a NEW timestamped
+summary<dateRun>.xlsx whose name includes both the date AND the time down to the minute (e.g.
+summary2026-10-01_1700.xlsx). Always create a new file every run — never overwrite or refresh an
+existing summary. Post a short summary (row count + sources) after each run.
 ```
 
 Same result as the no-skill path — just shorter to invoke and consistent across runs. (No-skill

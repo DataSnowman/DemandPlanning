@@ -15,9 +15,12 @@ single review-ready workbook.
 - **Read-only on sources.** Never edit, move, or overwrite the source spreadsheets.
 - **Append, don't merge-by-key.** Rows are stacked; a `Source File` column preserves origin.
 - **No totals in the summary.** Blank rows and leftover total/subtotal rows are dropped automatically.
-- **Deterministic output name with timestamp.** `summary<dateRun>.xlsx`, where `<dateRun>` is
-  the run date **and time** (e.g. `summary2026-10-01_1408.xlsx`) so the skill can run multiple
-  times a day without overwriting a prior summary.
+- **Deterministic output name with timestamp — one new file per run.** `summary<dateRun>.xlsx`,
+  where `<dateRun>` is the run date **and time down to the minute** (e.g.
+  `summary2026-10-01_1408.xlsx`). **Always create a new file on every run — never overwrite,
+  replace, or "refresh" an existing summary, even one created earlier the same day.** A
+  date-only name (e.g. `summary2026-10-01.xlsx`) is not acceptable, because a second run that
+  day would clobber the first.
 - **Dedicated output folder.** Always write the summary into a `SkillSummary` subfolder of the
   source folder (create it if needed). This keeps skill output separate from the sources and
   from any no-skill/manual `PromptSummary` output.
@@ -43,9 +46,10 @@ single review-ready workbook.
 3. **Clean.** Drop fully blank rows and total/subtotal rows (first-cell markers like
    "Total", "Average", "Subtotal", "Total Units In Stock", "Average Price").
 4. **Append.** Concatenate all rows, adding a `Source File` column as the first column.
-5. **Write.** Save `summary<dateRun>.xlsx` (with a date + time stamp, e.g.
-   `summary2026-10-01_1408.xlsx`) into the `SkillSummary` subfolder (create it if needed) with
-   a formatted header row, frozen header, and an auto-filter. Do not add total rows to the
+5. **Write.** Save a **new** `summary<dateRun>.xlsx` (with a date + time stamp down to the
+   minute, e.g. `summary2026-10-01_1408.xlsx`) into the `SkillSummary` subfolder (create it if
+   needed) with a formatted header row, frozen header, and an auto-filter. Never overwrite or
+   refresh an existing summary file — always create a new one. Do not add total rows to the
    summary.
 6. **Report.** State the output path, total rows, column count, and sources combined.
 
@@ -75,15 +79,20 @@ If you must do it inline instead of the script, follow the same clean → append
 When the user wants a recurring roll-up:
 
 - **In Copilot CLI / Cowork**, schedule a recurring prompt (e.g., a Friday cron like
-  `0 17 * * 5`) whose body is: *"Aggregate every .xlsx in `<OneDrive folder>` into
-  summary<dateRun>.xlsx using the aggregate-spreadsheets skill."*
+  `0 17 * * 5`) whose body is: *"Aggregate every .xlsx in `<OneDrive folder>` into a new
+  summary<dateRun>.xlsx (name includes the date AND the time down to the minute, e.g.
+  `2026-10-01_1700`) using the aggregate-spreadsheets skill. Always create a new file — never
+  overwrite or refresh an existing summary."*
 - **OS-level fallback**: wrap the script in Windows Task Scheduler (weekly, Friday) or a
   cron job calling the same command.
-- Each run produces a dated file, giving you a weekly history of summaries.
+- Each run produces a new date **and time** stamped file, giving you a full history of
+  summaries. Never overwrite a prior run's file.
 
 ## Verification checklist
 
-- [ ] Output file name is exactly `summary<dateRun>.xlsx`.
+- [ ] Output file name is `summary<dateRun>.xlsx` with a date **and time** stamp (e.g.
+      `summary2026-10-01_1408.xlsx`) — not a date-only name.
+- [ ] A **new** file was created; no existing summary was overwritten or refreshed.
 - [ ] Row count equals the sum of source data rows (minus totals/blanks).
 - [ ] `Source File` column present and correctly attributes every row.
 - [ ] No total/subtotal/blank rows carried into the summary.

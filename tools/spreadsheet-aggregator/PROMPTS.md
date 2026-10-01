@@ -55,10 +55,12 @@ Copy-paste prompts for each flow in the demo. Replace `<...>` placeholders with 
 
 > Set up a recurring Cowork task that runs **every Friday at 5pm**. Each run should use the
 > `aggregate-spreadsheets` skill to append every `.xlsx` in my OneDrive folder
-> `<OneDrive folder path>` into a `summary<dateRun>.xlsx` whose name includes date + time (e.g.
-> `2026-10-01_1700`), saved in the `SkillSummary` subfolder. Skip prior `summary*.xlsx` files,
-> drop total/blank rows, and add a `Source File` column. Post a short summary (row count +
-> sources) after each run.
+> `<OneDrive folder path>` into a **new** `summary<dateRun>.xlsx` whose name includes the date
+> **and** the time down to the minute (e.g. `2026-10-01_1700`), saved in the `SkillSummary`
+> subfolder. **Always create a new file every run — never overwrite or refresh an existing
+> summary, even if one already exists for today.** Skip prior `summary*.xlsx` files, drop
+> total/blank rows, and add a `Source File` column. Post a short summary (row count + sources)
+> after each run.
 
 **Windows Task Scheduler alternative (one line):**
 
