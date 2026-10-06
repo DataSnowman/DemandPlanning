@@ -26,6 +26,8 @@ single review-ready workbook.
   from any no-skill/manual `PromptSummary` output.
 - **Fail loud on structural drift.** Warn (or stop, with `--strict`) when a file's columns differ.
 - **3 or more files.** Works with any count ≥ 2; the demand-planning demo uses 3.
+- **Confirm the columns match across.** all files first, then show me the row count and which    files were combined.
+- **Fix any column order discrepencies**, as well as converting any units (like grams, oz, pounds to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size
 
 ## Inputs to confirm with the user
 

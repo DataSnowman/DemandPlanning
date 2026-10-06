@@ -11,7 +11,7 @@ Ultra** and **Surface RTX Spark Dev Box**, then aggregates them into one summary
 | 2 | **Cowork** | Aggregate the spreadsheets sitting in a OneDrive folder (optionally on a Friday schedule) |
 | 3 | **Copilot Code** | Build a real, version-controlled read-only app over the summary spreadsheet |
 
-> The three catalogs (`BestBuy.xlsx`, `Walmart.xlsx`, `Costco.xlsx`) are **synthetic** demo
+> The nine catalogs (`xlsx spreadseets') are **synthetic** demo
 > data in the `spreadsheets\` folder. Product specs and source links are in
 > [Reference: product specs](#reference-product-specs) at the bottom.
 
@@ -63,13 +63,12 @@ files directly (uploading sends a copy to OneDrive, which is expected).
 
 **Step 2.** Paste this prompt (note: "the three attached spreadsheets", not a folder):
 
+> ⚠️ **Point Cowork at Attach cloud files first.** Select/attach your **`SurfaceCatalogs`**
+> folder (the folder chip) so Cowork knows where to look. If you skip this, the prompt has no
+> folder to scan. *(Easy to forget on the first run!)*
+
 ```
-Append the three attached spreadsheets (BestBuy.xlsx, Walmart.xlsx, Costco.xlsx) into a
-single summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example
-2026-10-01_1408) so running it more than once a day won't overwrite the previous file. Keep
-one header row, add a "Source File" column so I can tell which retailer each row came from,
-and drop any blank or total rows. Confirm the columns match across all three files first, then
-show me the row count and which files were combined.
+Append the nine attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example 2026-10-01_1408) so running it more than once a day won't overwrite the previous file. Keep one header row, add a "Source File" column so I can tell which retailer each row came from, and drop any blank or total rows. Confirm the columns match across all three files first, then show me the row count and which files were combined.  Fix any column order discrepencies, as well as converting any units (like grams, oz, pounds to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size.
 ```
 
 ### Option B — Reference the folder (GitHub Copilot in VS Code / Copilot CLI)
@@ -81,22 +80,17 @@ These surfaces **can** see your workspace, so you can point at the folder instea
 **Step 2.** Paste this prompt:
 
 ```
-Append the three spreadsheets in the `spreadsheets` folder (BestBuy.xlsx, Walmart.xlsx,
-Costco.xlsx) into a single summary<dateRun>.xlsx in that same folder, where <dateRun> is the
-current date and time (for example 2026-10-01_1408) so running it more than once a day won't
-overwrite the previous file. Keep one header row, add a "Source File" column so I can tell
-which retailer each row came from, and drop any blank or total rows. Confirm the columns match
-across all three files first, then show me the row count and which files were combined.
+Append the nine attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example 2026-10-01_1408) so running it more than once a day won't overwrite the previous file. Keep one header row, add a "Source File" column so I can tell which retailer each row came from, and drop any blank or total rows. Confirm the columns match across all three files first, then show me the row count and which files were combined.  Fix any column order discrepencies, as well as converting any units (like grams, oz, pounds to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size.
 ```
 
 **Step 3.** Copilot creates `summary<dateRun>.xlsx` (e.g. `summary2026-10-01_1408.xlsx`) — in
 the folder for Option B, or as a downloadable file for Option A.
 
-**Expected result:** 39 rows (13 per retailer), 22 columns (the 21 catalog columns + `Source
+**Expected result:** 111 rows, 24 columns (the 23 catalog columns + `Source
 File`), no total rows. ✅
 
 Example output from running the Option A prompt in M365 Copilot Chat — Copilot confirms the
-21-column match, reports 39 combined rows (13 per retailer), and saves `summary2026-10-01.xlsx`
+23-column match, reports 111 combined rows, and saves `summary2026-10-01.xlsx`
 (this run predates the time-suffix convention; the current prompt names files like
 `summary2026-10-01_1408.xlsx`):
 
@@ -124,6 +118,7 @@ C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs\
     BestBuy.xlsx
     Walmart.xlsx
     Costco.xlsx
+    etc
 ```
 
 You can drop in **3 or more** files — any `.xlsx` with the same columns will be included.
@@ -140,26 +135,31 @@ Paste this and **replace the folder path with your OneDrive folder**:
 
 ```
 In my OneDrive folder "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx
-file (skip any file whose name starts with "summary", and ignore the output subfolder). First
-confirm they all share the same columns. Then append all of their rows into a single new
-workbook named summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example
-2026-10-01_1408) so running it more than once a day won't overwrite the previous file, and save
+file (skip any file whose name starts with "summary", and ignore the output subfolder). Append
+the attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun> is the 
+current date and time (for example 2026-10-01_1408) so running it more than once a day won't 
+overwrite the previous file. Keep one header row, add a "Source File" column so I can tell which
+retailer each row came from, and drop any blank or total rows. Confirm the columns match across 
+all three files first, then show me the row count and which files were combined.  Fix any column
+order discrepencies, as well as converting any units (like grams, oz, pounds to one unit of measure)
+with a preference for pounds related to weight and inches related to things like screen size. Save
 it inside a "PromptSummary" subfolder of that OneDrive folder (create the PromptSummary folder
-if it doesn't exist). Add a "Source File" column as the first column so each row shows which
-file it came from, keep only one header row, and drop any blank or total/subtotal rows. Do not
-modify the source files. When done, tell me the row count, the column count, and which files
-were combined.
+if it doesn't exist). Do not modify the source files. When done, tell me the row count, the column
+count, and which files were combined.
 ```
+
+![Part 2 Copilot Cowork approve](docs/part2approve.png)
+Note that you might need to approve more than one thing
 
 ### Step 3 — Check the result
 
 **Expected result:** `summary<dateRun>.xlsx` (e.g. `summary2026-10-01_1408.xlsx`) appears in a
 **`PromptSummary`** subfolder of your OneDrive folder, with one row per SKU across all source
-files and a `Source File` column — 39 rows / 22 columns for the three sample catalogs, no total
+files and a `Source File` column — 111 rows / 24 columns for the three sample catalogs, no total
 rows. ✅
 
 Example output from running the Step 2 no-skill prompt in Cowork — it combines the three
-OneDrive workbooks into `summary2026-10-01.xlsx` (39 data rows, 22 columns, `Source File`
+OneDrive workbooks into `summary2026-10-01.xlsx` (111 data rows, 23 columns, `Source File`
 first, one header row, no blank/total rows; this run predates the time-suffix convention):
 
 ![Part 2 Cowork output — combined OneDrive catalog workbook](docs/part2-cowork-output.png)
@@ -176,14 +176,13 @@ To make the same no-skill task recur, paste this in Cowork:
 ```
 Set up a recurring Cowork task every Friday at 5pm. Each run should look in my OneDrive folder
 "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx (skipping any file
-whose name starts with "summary"), confirm the columns match, and append all their rows into a
-NEW summary file saved in a "PromptSummary" subfolder of that OneDrive folder (create it if
-needed). Name the file summary<dateRun>.xlsx where <dateRun> includes BOTH the date AND the
-time down to the minute, e.g. summary2026-10-01_1700.xlsx. Always create a new file every run —
-never overwrite, replace, or "refresh" an existing summary, even if one already exists for
-today. Add a "Source File" column, keep one header row, and drop blank/total rows without
-modifying the source files. After each run, post a short summary (row count + which files were
-combined).
+whose name starts with "summary"), and ignore the output subfolder). Append
+the attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun> is the 
+current date and time (for example 2026-10-01_1408) so running it more than once a day won't 
+overwrite the previous file. Keep one header row, add a "Source File" column so I can tell which
+retailer each row came from, and drop any blank or total rows. Confirm the columns match across 
+all three files first, then show me the row count and which files were combined.  Fix any column
+order discrepencies, as well as converting any units (like grams, oz, pounds to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size. Save it inside a "PromptScheduled" subfolder of that OneDrive folder (create the PromptScheduled folder if it doesn't exist). Do not modify the source files. When done, tell me the row count, the column count, and which files were combined.
 ```
 
 > 💡 **Why the time matters:** if the name is only `summary2026-10-01.xlsx` (date only), a second
@@ -278,7 +277,7 @@ runs land in `PromptSummary`; skill runs land in `SkillSummary`.)
 
 ---
 
-## Part 3 — Build a real app with Copilot Code (read-only viewer over the summary)
+## Part 3 — Build a real app with Copilot Cowork (read-only viewer over the summary)
 
 Part 1 and Part 2 produce a `summary<dateRun>.xlsx`. In Part 3 you turn that into a small
 **read-only app** so stakeholders can browse and filter the consolidated catalog.
@@ -287,17 +286,16 @@ Part 1 and Part 2 produce a `summary<dateRun>.xlsx`. In Part 3 you turn that int
 
 | Approach | What you get | When to use |
 |----------|--------------|-------------|
-| **Copilot Code** (recommended) | A **real, version-controlled app** scaffolded into this repo (source files + commit/PR), that anyone can clone, run, or deploy. | The realistic scenario — a durable app you can share, review, and extend. |
+| **Copilot Cowork** (recommended) | A **real, version-controlled app** scaffolded into this repo (source files + commit/PR), that anyone can clone, run, or deploy. | The realistic scenario — a durable app you can share, review, and extend. |
 | Cowork quick prototype | An **ephemeral local app** Cowork spins up on your machine for a one-off look. | A fast, throwaway preview when you don't need to keep the code. |
 
-### Option A (recommended) — Copilot Code builds the app in the repo
+### Option A (recommended) — Copilot Cowork builds the app in the repo
 
-Ask **Copilot Code** (the coding agent in VS Code, the CLI, or on github.com) to scaffold the
+Ask **Copilot Cowork** (the coding agent in VS Code, the CLI, or on github.com) to scaffold the
 app into this repo. Paste this prompt:
 
 ```
-In this repo, create a small read-only web app under "app/catalog-viewer/" that loads the most
-recent summary*.xlsx from the folder
+/app Create a small read-only app that loads the most recent summary*.xlsx from the folder
 "C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\PromptSummary"
 (make the folder configurable via a SUMMARY_FOLDER environment variable that defaults to that
 path). "Most recent" means the file with the latest timestamp in its name: the files are named
