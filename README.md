@@ -282,47 +282,99 @@ runs land in `PromptSummary`; skill runs land in `SkillSummary`.)
 Part 1 and Part 2 produce a `summary<dateRun>.xlsx`. In Part 3 you turn that into a small
 **read-only app** so stakeholders can browse and filter the consolidated catalog.
 
-**Two ways to do it:**
+**Way to do it:**
 
 | Approach | What you get | When to use |
 |----------|--------------|-------------|
 | **Copilot Cowork** (recommended) | A **real, version-controlled app** scaffolded into this repo (source files + commit/PR), that anyone can clone, run, or deploy. | The realistic scenario — a durable app you can share, review, and extend. |
-| Cowork quick prototype | An **ephemeral local app** Cowork spins up on your machine for a one-off look. | A fast, throwaway preview when you don't need to keep the code. |
 
-### Option A (recommended) — Copilot Cowork builds the app in the repo
+### Copilot Cowork builds the app (recommended)
 
 Ask **Copilot Cowork** (the coding agent in VS Code, the CLI, or on github.com) to scaffold the
 app into this repo. Paste this prompt:
 
 ```
-/app Create a small read-only app that loads the most recent summary*.xlsx from the folder
-"C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\PromptSummary"
-(make the folder configurable via a SUMMARY_FOLDER environment variable that defaults to that
-path). "Most recent" means the file with the latest timestamp in its name: the files are named
-summary<YYYY-MM-DD_HHMM>.xlsx, which sort chronologically as plain text, so pick the
-lexicographically greatest matching filename (fall back to newest file-modified time only if no
-timestamp can be parsed). Show which summary file is loaded in the UI. The app must never write
-to the source data. It should let me:
-- filter rows by Retailer, Product Line, and Memory (GB)
-- sort by Price (USD)
-- show totals and averages computed in the app (not written back to the file)
-and re-scan the folder for the newest summary file each time it loads (add a "Reload" button so
-I can pick up a new summary without restarting). Use Python + Streamlit with pandas/openpyxl
-(reuse the versions already used by tools/spreadsheet-aggregator). Add a requirements.txt and an
-app README with run instructions, keep it read-only, and commit it on a new branch with a short
-PR description.
+/app Build and privately publish one small, single-page managed app named
+“Prompt Summary Explorer” using the attached OneDrive folder “PromptSummary.”
+
+TIME AND SCOPE
+Target 2–3 minutes. Prioritize a complete, minimal implementation.
+No additional pages, decorative content, workbook inventory, or timeline.
+Use existing connections and standard components.
+Do not repeatedly explore, redesign, or retry the same operation.
+If blocked, stop promptly and name the failed stage and required remedy.
+Do not publish an empty shell or call an unverified app working.
+
+LIVE DATA ONLY
+Use authenticated OneDrive for Business for folder listing and Excel Online
+(Business) for structured table reads.
+Read operations only. Never download or parse XLSX files.
+No sample data, embedded snapshots, or screenshot-derived values.
+Do not change workbook data or substitute another data source.
+
+LOAD AND RELOAD
+On every app load and Reload:
+1. List the entire attached folder, following all pagination.
+2. Consider only summary*.xlsx files.
+3. Prefer exact summaryYYYY-MM-DD_HHMM.xlsx filenames with valid dates and
+   24-hour times; choose the lexicographically greatest valid filename.
+4. Only if none has a valid filename timestamp, choose newest modified time.
+5. Discover the selected workbook’s CatalogRecords table and read all rows,
+   following pagination. The source is small.
+6. Resolve actual headers from the live response. Confirm filename and
+   actual data-row and workbook-column counts; never hard-code counts.
+
+ONE COMPACT DARK PAGE
+Heading upper left; Reload upper right; loaded filename below heading.
+Products controls in one desktop row:
+Retailer | Product Line | Memory (GB) | Price (USD) sort.
+Generate choices from live rows. Combine all three filters.
+Sort price numerically ascending or descending.
+Clear filters resets all three filters.
+
+Show filtered row count, total price, and arithmetic average price.
+Calculate over ALL filtered rows, independently of display pagination.
+Currency: two decimals. Zero matches: count and totals zero, no division error.
+Report invalid numeric cells; never silently replace them with zero.
+
+Two equal-width chart panels:
+- Blue horizontal bars: arithmetic average price by retailer.
+- Green horizontal bars: total Units In Stock by retailer.
+Use the same filtered rows and retailer order for both charts.
+Include accessible “Chart data” tables.
+If retailer groups need paging, page both charts together.
+
+Results table:
+Product | Retailer | Memory (GB) | Price (USD).
+Include actual product name, product line, and SKU in the Product cell
+when available. Paginate results without changing metrics or charts.
+Stack controls and charts on narrow screens.
+Use any attached app-layout screenshot for appearance only.
+
+VERIFY AND PUBLISH
+Run source checks once. If deployment is required to open the preview,
+publish the complete implementation privately, then test it.
+Do not share it with anyone.
+
+Runtime checks:
+Real folder listing and complete Excel read; filename and counts;
+each filter and combined filters; both numeric sort directions;
+metrics and both charts against the same filtered rows;
+Clear filters; zero matches; Reload making fresh data requests.
+Separate source checks from actual runtime checks.
+Publishing alone is not proof of functionality.
+
+FINAL RESPONSE — concise:
+Implemented: features and omissions.
+Verified: checks actually passed, live filename/counts, and blockers.
+Published: confirmed link or reason not published.
+Shared: no.
+Do not provide a source-code ZIP.
 ```
 
 **What Copilot Code does differently from Cowork:** it writes real source files
 (`app/catalog-viewer/…`), a `requirements.txt`, and a README, then opens a **branch/PR** you can
 review and merge — so the viewer is a durable, shareable part of the repo, not a one-off.
-
-**Run it locally after it's generated:**
-
-```
-pip install -r app/catalog-viewer/requirements.txt
-streamlit run app/catalog-viewer/app.py
-```
 
 The app reads the newest `summary<dateRun>.xlsx` from your `PromptSummary` folder on each load,
 so after any Part 2 run the viewer shows the latest consolidation automatically.
@@ -333,23 +385,6 @@ so after any Part 2 run the viewer shows the latest consolidation automatically.
 > That's exactly why the timestamp (date **and** time) matters: it guarantees an unambiguous
 > "latest" even with several files from the same day. Hit **Reload** to pick up a newer summary
 > without restarting.
-
-> 💡 This repo uses the **`PromptSummary`** output from Part 2's no-skill prompt (folder
-> `C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\PromptSummary`). If you drive the demo
-> with the optional skill instead, point `SUMMARY_FOLDER` at the `SkillSummary` subfolder.
-
-### Option B — Cowork quick prototype (ephemeral)
-
-If you just want a fast throwaway preview, paste this in Cowork instead:
-
-```
-Build a read-only local app (runs on this machine, never writes to the data) that loads the
-most recent summary*.xlsx in
-"C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\PromptSummary" and lets me browse and
-filter rows: filter by Retailer, Product Line, and Memory (GB); sort by Price (USD); and show
-totals and averages computed in the app (not written back to the file). Refresh from the newest
-summary file on launch.
-```
 
 ---
 
