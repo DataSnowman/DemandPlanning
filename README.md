@@ -133,6 +133,8 @@ Paste this and **replace the folder path with your OneDrive folder**:
 > folder (the folder chip) so Cowork knows where to look. If you skip this, the prompt has no
 > folder to scan. *(Easy to forget on the first run!)*
 
+Paste this prompt:
+
 ```
 In my OneDrive folder "C:\Users\<you>\OneDrive - Microsoft\SurfaceCatalogs", find every .xlsx
 file (skip any file whose name starts with "summary", and ignore the output subfolder). Append
@@ -385,6 +387,60 @@ so after any Part 2 run the viewer shows the latest consolidation automatically.
 > That's exactly why the timestamp (date **and** time) matters: it guarantees an unambiguous
 > "latest" even with several files from the same day. Hit **Reload** to pick up a newer summary
 > without restarting.
+
+---
+
+## Part 4 — Fun addition to get the data into a SQL Database or Lakehouse Table
+
+> ⚠️ **Point Cowork at the OneDrive folder first.** Select/attach your **`SurfaceCatalogs\PromptSummary`**
+> folder (the folder chip) so Cowork knows where to look. If you skip this, the prompt has no
+> folder to scan. *(Easy to forget on the first run!)*
+> My folder is C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\PromptSummary
+
+Paste this prompt:
+
+```
+Use the most recent Summary spreadsheet to create three things: 1) importable csv called rtxsparkdemand.csv, 2) TSQL DDL Create table code and Insert statement to insert the data into that table in a sql file called rtxsparkdemand.sql, and 3) Parquet table that I can import into Fabric, Databricks, or Snowflake called rtxsparkdemand.  Put these outputs into a folder C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\outputs
+```
+
+Here is the output:
+
+![Part 4 Outputs](docs/outputs.png)
+
+### Load the data into Fabric SQL Database and Fabric Lakehouse
+
+Very easy to load the processed outputs into Fabric
+
+#### Use the rtxsparkdemand.sql and cut and paste the code into the SQL editor in Fabric SQL Database
+
+![Part 4 SQL Outputs](docs/rtxsparkdemandsql.png)
+
+Run the code
+
+![Part 4 SQL Fabric SQL DB](docs/rtxsparkdemandtable.png)
+
+Open the created and populated table
+
+![Part 4 SQL Fabric SQL DB Table](docs/rtxsparkdemandtable2.png)
+
+
+#### Use the rtxsparkdemand and load into a Fabric Lakehouse
+
+![Part 4 Parquet Outputs](docs/rtxsparkdemandparquet.png)
+
+Upload to Fabric Lakehouse File and load as a new table
+
+![Part 4 SQL Fabric Parquet File](docs/rtxsparkdemandparquetfile.png)
+
+Open the rtxsparkdemand parquet table
+
+![Part 4 SQL Fabric Parquet Table](docs/rtxsparkdemandparquettable.png)
+
+Note you could load the csv file in a similar way
+
+You could also create a Rayfin App to read/write from/to the Fabric SQL Database table, build a Power BI report on the data.
+
+Check out my repo [ZavaEquipRentalAssetIntel](https://github.com/DataSnowman/ZavaEquipRentalAssetIntel) if you are interesting in learning about Fabric Apps with Rayfin
 
 ---
 
