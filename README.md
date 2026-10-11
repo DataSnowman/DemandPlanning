@@ -68,7 +68,13 @@ files directly (uploading sends a copy to OneDrive, which is expected).
 > folder to scan. *(Easy to forget on the first run!)*
 
 ```
-Append the nine attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example 2026-10-01_1408) so running it more than once a day won't overwrite the previous file. Keep one header row, add a "Source File" column so I can tell which retailer each row came from, and drop any blank or total rows. Confirm the columns match across all three files first, then show me the row count and which files were combined.  Fix any column order discrepencies, as well as converting any units (like grams, oz, pounds to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size.
+Append the nine attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun>
+is the current date and time (for example 2026-10-01_1408) so running it more than once a day
+ won't overwrite the previous file. Keep one header row, add a "Source File" column so I can
+tell which retailer each row came from, and drop any blank or total rows. Confirm the columns
+ match across all three files first, then show me the row count and which files were combined.
+Fix any column order discrepencies, as well as converting any units (like grams, oz, pounds
+ to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size.
 ```
 
 ### Option B — Reference the folder (GitHub Copilot in VS Code / Copilot CLI)
@@ -80,7 +86,13 @@ These surfaces **can** see your workspace, so you can point at the folder instea
 **Step 2.** Paste this prompt:
 
 ```
-Append the nine attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun> is the current date and time (for example 2026-10-01_1408) so running it more than once a day won't overwrite the previous file. Keep one header row, add a "Source File" column so I can tell which retailer each row came from, and drop any blank or total rows. Confirm the columns match across all three files first, then show me the row count and which files were combined.  Fix any column order discrepencies, as well as converting any units (like grams, oz, pounds to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size.
+Append the nine attached spreadsheets into a single summary<dateRun>.xlsx, where <dateRun>
+is the current date and time (for example 2026-10-01_1408) so running it more than once a day
+won't overwrite the previous file. Keep one header row, add a "Source File" column so I can tell
+which retailer each row came from, and drop any blank or total rows. Confirm the columns match
+across all three files first, then show me the row count and which files were combined.
+Fix any column order discrepencies, as well as converting any units (like grams, oz, pounds
+to one unit of measure) with a preference for pounds related to weight and inches related to things like screen size.
 ```
 
 **Step 3.** Copilot creates `summary<dateRun>.xlsx` (e.g. `summary2026-10-01_1408.xlsx`) — in
