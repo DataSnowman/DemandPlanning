@@ -412,7 +412,11 @@ so after any Part 2 run the viewer shows the latest consolidation automatically.
 Paste this prompt:
 
 ```
-Use the most recent Summary spreadsheet to create three things: 1) importable csv called rtxsparkdemand.csv, 2) TSQL DDL Create table code and Insert statement to insert the data into that table in a sql file called rtxsparkdemand.sql, and 3) Parquet table that I can import into Fabric, Databricks, or Snowflake called rtxsparkdemand.  Put these outputs into a folder C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\outputs
+Use the most recent Summary spreadsheet to create three things: 
+1) importable csv called rtxsparkdemand.csv, 
+2) TSQL DDL Create table code and Insert statement to insert the data into that table in a sql file called rtxsparkdemand.sql, and 
+3) Parquet table that I can import into Fabric, Databricks, or Snowflake called rtxsparkdemand. 
+Put these outputs into a folder C:\Users\darsch\OneDrive - Microsoft\!SurfaceCatalogs\outputs
 ```
 
 Here is the output:
